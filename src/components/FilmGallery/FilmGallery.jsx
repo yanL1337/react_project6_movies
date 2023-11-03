@@ -2018,22 +2018,23 @@ const FilmGallery = () => {
   let filteredMovies;
 
   const [filter, setFilter] = useState();
-  const [userInput, setInput] = useState();
-  const [films, setFilm] = useState(movies);
+  const [userInput, setInput] = useState("");
+  const [films, setFilm] = useState([...movies]);
+  const [genre, setGenre] = useState([]);
 
   useEffect(() => {
-    setFilm(
-      movies.filter((title) => title.title.toLowerCase().includes(userInput))
-    );
+    filteredMovies = movies.filter((item) => {
+      return item.title.includes(userInput) ? item : null;
+    });
+    setFilm(filteredMovies);
   }, [userInput]);
 
-  // console.log(films);
+  useEffect(() => {
+    console.log(genre);
+  }, [genre]);
 
   switch (filter) {
     case "asc":
-      // filteredMovies = movies.sort((a, b) => {
-      //   return a.year - b.year;
-      // });
       films.sort((a, b) => a.year - b.year);
 
       break;
@@ -2047,13 +2048,11 @@ const FilmGallery = () => {
       films.sort((a, b) => Number(a.rate) - Number(b.rate)).reverse();
       break;
     case "az":
-      films.sort((a, b) => a.title.charCodeAt(0) - b.title.charCodeAt(0));
+      films.sort((a, b) => a.title.localeCompare(b.title));
       break;
 
     case "za":
-      films
-        .sort((a, b) => a.title.charCodeAt(0) - b.title.charCodeAt(0))
-        .reverse();
+      films.sort((a, b) => b.title.localeCompare(a.title));
       break;
 
     default:
@@ -2082,6 +2081,29 @@ const FilmGallery = () => {
         value={userInput}
         onChange={(e) => setInput(e.target.value)}
       />
+      <label>
+        <input
+          type="checkbox"
+          value="Thriller"
+          onChange={(e) => setGenre(e.target.value)}
+        />
+        Thriller
+      </label>
+
+      <label>
+        <input
+          type="checkbox"
+          value="Drama"
+          onChange={(e) => (e.target.checked ? setGenre(e.target.value) : null)}
+        />
+        Drama
+      </label>
+
+      <label>
+        <input type="checkbox" id="" />
+        Comedy
+      </label>
+
       <div className="gallery">
         {films.map((item, index) => (
           <FilmCard key={index} film={item} />
